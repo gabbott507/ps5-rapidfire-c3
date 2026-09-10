@@ -1,0 +1,11 @@
+# PlatformIO and editor state
+.pio/
+.vscode/
+
+# Generated firmware artifacts are attached to GitHub releases
+*.bin
+
+# Operating-system metadata
+.DS_Store
+Thumbs.db
+Desktop.ini
