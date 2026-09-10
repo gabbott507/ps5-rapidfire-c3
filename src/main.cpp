@@ -9,7 +9,7 @@
 
 namespace {
 constexpr uint8_t R2_PIN = 0;
-constexpr char FW_VERSION[] = "0.4.8";
+constexpr char FW_VERSION[] = "0.4.9";
 constexpr char AP_SSID[] = "R2-RapidFire";
 constexpr char AP_PASSWORD[] = "12345678";
 constexpr uint16_t DNS_PORT = 53;
@@ -19,6 +19,11 @@ constexpr uint32_t BURST_RELEASE_KICK_US = 35000;
 constexpr uint32_t FLOAT_SAMPLE_US = 2500;
 constexpr uint32_t RELEASE_PROBE_US = 10000;
 constexpr uint64_t SLEEP_POLL_US = 250000;
+// While asleep the board reboots on every timer wake just to sample the R2 ADC.
+// When the controller signal is absent (controller off) that reboot is wasted
+// energy, so back off the poll interval until a valid signal returns.
+constexpr uint8_t SLEEP_BACKOFF_STEPS = 6;
+constexpr uint64_t SLEEP_BACKOFF_MAX_US = 30000000;  // 30 s between idle polls
 constexpr int MIN_CAL_SPAN = 150;
 
 enum class Mode : uint8_t { Off, Continuous, Burst };
@@ -60,6 +65,7 @@ bool sleepRequested = false;
 bool otaInProgress = false;
 bool rebootRequested = false;
 RTC_DATA_ATTR uint8_t sleepPressPolls = 0;
+RTC_DATA_ATTR uint8_t sleepBackoffLevel = 0;
 uint32_t rebootRequestedMs = 0;
 uint32_t sleepRequestedMs = 0;
 uint32_t lastActivityMs = 0;
@@ -115,16 +121,24 @@ void updatePhysicalTrigger(uint16_t value) {
   if (raw != triggerPressed && now - candidateSinceMs >= debounce) triggerPressed = raw;
 }
 
-void configureWakeSources() {
+uint64_t backoffIntervalUs(uint8_t level) {
+  uint64_t interval = SLEEP_POLL_US;
+  for (uint8_t i = 0; i < level; ++i) interval *= 2;
+  return interval > SLEEP_BACKOFF_MAX_US ? SLEEP_BACKOFF_MAX_US : interval;
+}
+
+void configureWakeSources(uint64_t pollUs = SLEEP_POLL_US) {
   floatTrigger();
   delay(2);
   // R2 is analog and can immediately retrigger digital GPIO wake, so waking
   // is timer/ADC-only. RESET remains the immediate hardware fallback.
-  esp_sleep_enable_timer_wakeup(SLEEP_POLL_US);
+  esp_sleep_enable_timer_wakeup(pollUs);
 }
 
 void enterDeepSleep() {
   resetEngine();
+  sleepPressPolls = 0;
+  sleepBackoffLevel = 0;
   WiFi.softAPdisconnect(true);
   WiFi.mode(WIFI_OFF);
   delay(30);
@@ -351,11 +365,20 @@ void setup() {
     int upper = max(cfg.released, cfg.pressed) + 150;
     bool validSignal = adcValue >= max(0, lower) && adcValue <= min(4095, upper);
     bool pressed = validSignal && travelPercent(adcValue) >= cfg.pressPoint;
-    sleepPressPolls = pressed ? min<uint8_t>(sleepPressPolls + 1, 2) : 0;
+    if (pressed) {
+      sleepPressPolls = min<uint8_t>(sleepPressPolls + 1, 2);
+      sleepBackoffLevel = 0;
+    } else {
+      // No press detected. When the controller signal is also absent (controller
+      // off) back off the timer wake so the board stops rebooting every 250 ms
+      // indefinitely on battery power; any valid signal resets it immediately.
+      sleepPressPolls = 0;
+      sleepBackoffLevel = validSignal ? 0 : min<uint8_t>(sleepBackoffLevel + 1, SLEEP_BACKOFF_STEPS);
+    }
     if (sleepPressPolls < 2) {
       // Require two valid pressed samples before starting Wi-Fi. This rejects
       // ADC noise and an unpowered controller sensor.
-      configureWakeSources();
+      configureWakeSources(backoffIntervalUs(sleepBackoffLevel));
       esp_deep_sleep_start();
     }
     sleepPressPolls = 0;
