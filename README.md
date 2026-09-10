@@ -48,7 +48,7 @@ pio device monitor
 
 The build uses the Arduino-ESP32 3.x-compatible PioArduino platform specified in [`platformio.ini`](platformio.ini). See [Building and releasing](docs/BUILDING_AND_RELEASING.md) for artifact locations, OTA guidance, and the release workflow.
 
-Ready-to-flash v0.4.8 factory and OTA images are attached to the [GitHub release](../../releases/tag/v0.4.8). Flash the factory image at offset `0x0`. Devices already running v0.4.2 or newer can install the `-ota.bin` image from the dashboard.
+Ready-to-flash v0.4.8 factory and OTA images are attached to the [GitHub release](https://github.com/gabbott507/ps5-rapidfire-c3/releases/tag/v0.4.8). Flash the factory image at offset `0x0`. Devices already running v0.4.2 or newer can install the `-ota.bin` image from the dashboard.
 
 ## First-time setup
 
