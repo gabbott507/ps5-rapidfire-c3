@@ -54,4 +54,8 @@ This build starts the `R2-Diagnostic` access point and is intended only for isol
 7. Commit the source and documentation, then tag the commit `vX.Y.Z`.
 8. Create a GitHub release and attach both binaries.
 
+Also keep the browser flasher (<https://projectrapidfire.pdulab.org>) in sync:
+place `r2-rapidfire-c3-vX.Y.Z.bin` in the site's `firmware/` directory and update
+the filename and version in the site's `flasher.js` and `index.html`.
+
 Never upload the factory image through the dashboard. Dashboard updates must use the file ending in `-ota.bin`.

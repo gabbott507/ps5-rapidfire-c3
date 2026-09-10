@@ -6,11 +6,12 @@ This file is the source of truth for firmware changes. Every future firmware ima
 
 - Added battery-saving sleep poll backoff: when the controller signal is absent (controller off), the board progressively slows its deep-sleep ADC polling from 250 ms up to 30 s, cutting idle battery drain from repeated wake reboots. Any valid controller signal restores fast 250 ms polling immediately.
 - Bumped version to 0.4.9 so this build is identifiable on the dashboard.
+- Flash it with the in-browser flasher at <https://projectrapidfire.pdulab.org>, or install the OTA image from the device dashboard.
 - Recommended starting settings: 8–10 SPS and 25–35 ms pulse width.
 - Factory image: `dist/r2-rapidfire-c3-v0.4.9.bin`
 - OTA image: `dist/r2-rapidfire-c3-v0.4.9-ota.bin`
 
-## v0.4.8 — current release
+## v0.4.8
 
 - Includes the subsequent burst-control fixes after v0.4.6.
 - Includes the current timer/ADC deep-sleep wake behavior.

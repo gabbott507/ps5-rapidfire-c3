@@ -2,13 +2,14 @@
 
 ## Current release
 
-Current development release: **v0.4.8**
+Current development release: **v0.4.9**
 
-- Full USB/factory image: `dist/r2-rapidfire-c3-v0.4.8.bin`
-- Wireless application image: `dist/r2-rapidfire-c3-v0.4.8-ota.bin`
+- Full USB/factory image: `dist/r2-rapidfire-c3-v0.4.9.bin`
+- Wireless application image: `dist/r2-rapidfire-c3-v0.4.9-ota.bin`
 - Wi-Fi SSID: `R2-RapidFire`
 - Wi-Fi password: `12345678`
 - Dashboard: `http://192.168.4.1`
+- Browser flasher: <https://projectrapidfire.pdulab.org>
 
 The dashboard displays the running firmware version. Version 0.4.2 introduced the dual-OTA partition table; devices on v0.4.2 or newer can install subsequent `-ota.bin` files wirelessly.
 
@@ -79,7 +80,7 @@ Versions v0.4.4 and v0.4.6 should not be used:
 - v0.4.4 introduced firing regressions from aggressive release probing.
 - v0.4.6 could immediately wake from sleep because GPIO wake remained enabled.
 
-v0.4.3 is retained as a stable rollback image. v0.4.8 contains the subsequent burst-control and sleep fixes.
+v0.4.3 is retained as a stable rollback image. v0.4.9 contains the subsequent burst-control, sleep, and battery-backoff fixes.
 
 ## Important files
 
@@ -92,7 +93,7 @@ v0.4.3 is retained as a stable rollback image. v0.4.8 contains the subsequent bu
 ## Suggested next work
 
 1. Measure real controller battery drain awake versus asleep.
-2. Test v0.4.8 burst counts across several weapons at 6, 8, 10, and 12 SPS.
+2. Test v0.4.9 burst counts across several weapons at 6, 8, 10, and 12 SPS.
 3. Confirm continuous mode does not add a trailing shot on release.
 4. Consider a second R2 sensing wire or analog switch for truly independent trigger sensing and output.
 5. Potential future L2 hair-trigger support requires identifying and measuring the L2 signal pad before coding.

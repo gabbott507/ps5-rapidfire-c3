@@ -2,10 +2,13 @@
 
 ESP32-C3 Super Mini firmware for an existing DualSense R2 one-wire modification. It provides continuous and burst rapid-fire modes, trigger calibration, persistent settings, a local Wi-Fi dashboard, over-the-air updates, and automatic deep sleep.
 
-Current release: **v0.4.8**
+Current release: **v0.4.9**
 
 > [!CAUTION]
 > This is an experimental hardware modification. It has not been electrically validated on every DualSense board revision. Verify voltages with a multimeter, use the required series resistor, and test on hardware you can afford to damage. Use may violate game, tournament, or platform rules.
+
+> [!IMPORTANT]
+> Most users never need to build or flash over USB. Use the in-browser flasher at <https://projectrapidfire.pdulab.org> to flash the latest factory image straight to an ESP32-C3 Super Mini over Web Serial (Chrome or Edge, HTTPS required).
 
 ## Features
 
@@ -38,6 +41,8 @@ Do not connect controller battery power and USB 5 V simultaneously unless you ha
 
 ## Build and flash
 
+Ready-to-flash images are also published to the <https://projectrapidfire.pdulab.org> flasher page and to the [GitHub release](https://github.com/gabbott507/ps5-rapidfire-c3/releases). The easiest path for most users is the website's built-in browser flasher. To build from source instead:
+
 Install [PlatformIO](https://platformio.org/), open this repository, and run:
 
 ```sh
@@ -48,7 +53,7 @@ pio device monitor
 
 The build uses the Arduino-ESP32 3.x-compatible PioArduino platform specified in [`platformio.ini`](platformio.ini). See [Building and releasing](docs/BUILDING_AND_RELEASING.md) for artifact locations, OTA guidance, and the release workflow.
 
-Ready-to-flash v0.4.8 factory and OTA images are attached to the [GitHub release](https://github.com/gabbott507/ps5-rapidfire-c3/releases/tag/v0.4.8). Flash the factory image at offset `0x0`. Devices already running v0.4.2 or newer can install the `-ota.bin` image from the dashboard.
+Ready-to-flash v0.4.9 factory and OTA images are attached to the [GitHub release](https://github.com/gabbott507/ps5-rapidfire-c3/releases/tag/v0.4.9) and are flashable from the <https://projectrapidfire.pdulab.org> browser flasher. Devices already running v0.4.2 or newer install the `-ota.bin` image from the device dashboard.
 
 ## First-time setup
 
@@ -95,6 +100,6 @@ The separate website is intentionally not part of this repository. Generated `.b
 
 - The one-wire design cannot drive the controller-facing signal and independently read the physical trigger at the same instant.
 - High SPS values may be ignored by games whose weapons have a lower firing cadence.
-- v0.4.4 and v0.4.6 contain known regressions; use v0.4.8 or the v0.4.3 rollback image.
+- v0.4.4 and v0.4.6 contain known regressions; use v0.4.9 or the v0.4.3 rollback image.
 
 For deeper implementation notes and suggested next work, see [`HANDOFF.md`](HANDOFF.md). For release history, see [`RELEASE_NOTES.md`](RELEASE_NOTES.md).
